@@ -34,5 +34,8 @@ Penalty rules and rental limits are placed in a dedicated service, so they are e
 ## Run instruction
 Run the project with:
 
+## Notes
+The project was written as a simple console application, so the main goal was to keep the code readable and divide responsibilities between models, services, and the repository.
+
 ```bash
 dotnet run
