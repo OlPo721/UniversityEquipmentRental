@@ -40,18 +40,18 @@ public class RentalService
         Equipment? equipment = _repository.EquipmentItems.FirstOrDefault(e => e.Id == equipmentId);
 
         if (user == null)
-            throw new InvalidOperationException("User not found.");
+            throw new InvalidOperationException($"User with id {userId} was not found.");
 
         if (equipment == null)
-            throw new InvalidOperationException("Equipment not found.");
+            throw new InvalidOperationException($"Equipment with id {equipmentId} was not found.");
 
         if (!equipment.IsAvailable)
-            throw new InvalidOperationException("Equipment is not available.");
+            throw new InvalidOperationException($"Equipment with id {equipmentId} is not available.");
 
         int activeRentals = _repository.Rentals.Count(r => r.User.Id == userId && !r.IsReturned);
 
         if (!_rentalPolicyService.CanUserRent(activeRentals, user.RentalLimit))
-            throw new InvalidOperationException("User exceeded rental limit.");
+            throw new InvalidOperationException($"{user.UserType} {user.FirstName} {user.LastName} exceeded the rental limit.");
 
         var rental = new Rental(user, equipment, DateTime.Now.Date, days);
         equipment.IsAvailable = false;
@@ -66,7 +66,7 @@ public class RentalService
             .FirstOrDefault(r => r.Equipment.Id == equipmentId && !r.IsReturned);
 
         if (rental == null)
-            throw new InvalidOperationException("Active rental not found.");
+            throw new InvalidOperationException($"Active rental for equipment id {equipmentId} was not found.");
 
         decimal penalty = _rentalPolicyService.CalculatePenalty(rental.DueDate, returnDate);
         rental.Return(returnDate, penalty);
